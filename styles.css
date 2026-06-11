@@ -114,7 +114,7 @@ body {
 /* Hero Section */
 .hero {
     background: linear-gradient(rgba(27, 67, 50, 0.7), rgba(30, 58, 95, 0.7)), 
-                url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&h=600&fit=crop') center/cover;
+                url('https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=1200&h=600&fit=crop') center/cover;
     height: 600px;
     display: flex;
     align-items: center;
