@@ -1,3 +1,6 @@
+// Initialize EmailJS (replace with your actual public key from emailjs.com)
+emailjs.init("YOUR_PUBLIC_KEY_HERE"); // Sign up at https://www.emailjs.com/ to get a free public key
+
 // Mobile Menu Toggle
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
@@ -34,53 +37,42 @@ function handleSubmit(event) {
         address: document.getElementById('address').value,
         lotSize: document.getElementById('lotSize').value,
         serviceType: getCheckedValues('serviceType'),
-        frequency: document.getElementById('frequency').value,
-        message: document.getElementById('message').value,
-        subscribe: document.querySelector('input[name="subscribe"]').checked
+        message: document.getElementById('message').value
     };
 
-    // Create email body
-    const emailBody = createEmailBody(formData);
+    // Send email using EmailJS
+    sendEmailViaEmailJS(formData);
+}
 
-    // Create mailto link
-    const mailtoLink = `mailto:info@napervilleallyear.com?subject=New Quote Request from ${formData.name}&body=${encodeURIComponent(emailBody)}`;
+function sendEmailViaEmailJS(formData) {
+    // Prepare email template parameters
+    const templateParams = {
+        to_email: 'napervilleallseason@gmail.com',
+        customer_name: formData.name,
+        customer_email: formData.email,
+        customer_phone: formData.phone,
+        customer_address: formData.address,
+        lot_size: formData.lotSize,
+        service_type: formData.serviceType || 'Not specified',
+        message: formData.message || 'No additional details provided'
+    };
 
-    // Open email client
-    window.location.href = mailtoLink;
-
-    // Show success message
-    showSuccessMessage();
+    // Send email
+    emailjs.send('service_ID', 'template_ID', templateParams)
+        .then(function(response) {
+            console.log('SUCCESS!', response.status, response.text);
+            showSuccessMessage();
+            // Reset form
+            document.querySelector('.quote-form').reset();
+        }, function(error) {
+            console.log('FAILED...', error);
+            alert('There was an error sending your quote request. Please try again or contact us directly at napervilleallseason@gmail.com');
+        });
 }
 
 function getCheckedValues(name) {
     const checkboxes = document.querySelectorAll(`input[name="${name}"]:checked`);
     return Array.from(checkboxes).map(cb => cb.value).join(', ');
-}
-
-function createEmailBody(data) {
-    return `
-New Quote Request
-
-CUSTOMER INFORMATION:
-Name: ${data.name}
-Email: ${data.email}
-Phone: ${data.phone}
-Address: ${data.address}
-
-SERVICE DETAILS:
-Lot Size: ${data.lotSize}
-Service Type: ${data.serviceType}
-Frequency: ${data.frequency}
-
-ADDITIONAL INFORMATION:
-${data.message || 'No additional details provided'}
-
-PREFERENCES:
-Subscribe to Newsletter: ${data.subscribe ? 'Yes' : 'No'}
-
----
-Please respond to this customer at your earliest convenience.
-    `;
 }
 
 function showSuccessMessage() {
